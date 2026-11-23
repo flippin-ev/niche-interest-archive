@@ -71,7 +71,12 @@ window.layoutRow = function (cards) {
     cards.style.flexWrap = fits ? 'nowrap' : 'wrap';
     const w = roots.map(r => Math.round(Math.sqrt(A) * r)), h = w.map((x, k) => x / (roots[k] * roots[k]));
     const H = Math.max(...h);                      // line stickers up on their bottom edge when in one row
+    cards.style.paddingRight = '';
     items.forEach((a, k) => { a.style.width = w[k] + 'px'; a.style.marginTop = fits ? Math.round(H - h[k]) + 'px' : '0'; });
+    if (phone.matches) {                           // let the last card slide all the way to the left edge too
+      const last = items[items.length - 1];
+      cards.style.paddingRight = Math.max(16, cards.clientWidth - last.offsetWidth - 16) + 'px';
+    }
   };
   imgs.forEach(i => i.complete ? 0 : i.addEventListener('load', run));
   run();
