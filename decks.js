@@ -20,7 +20,7 @@ window.DECKS = [
     no: "002",
     session: 1,
     date: "2026-11-19",
-    title: "The case for building new cities",
+    title: "The Case for Building New Cities",
     subtitle: "",
     speaker: "Jen",
     sticker: "assets/new-cities.jpg",
