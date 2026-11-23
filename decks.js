@@ -66,17 +66,13 @@ window.layoutRow = function (cards) {
     let A = Math.max(Math.min(fitA, AMAX), AMAX * 0.8);   // never smaller than this: on tiny screens the row scrolls sideways instead
     if (phone.matches) {                           // phones: a swipe carousel, one big sticker at a time (next one peeks in)
       const wide = Math.max(...roots), tall = Math.min(...roots);
-      A = Math.pow(Math.min(0.74 * cards.clientWidth / wide, 0.5 * innerHeight * tall), 2);
+      A = Math.pow(Math.min((cards.clientWidth - 24) / wide, 0.5 * innerHeight * tall), 2);
     }
+    cards.style.columnGap = phone.matches ? cards.clientWidth + 'px' : '';   // phones: only one sticker is ever in view
     cards.style.flexWrap = fits ? 'nowrap' : 'wrap';
     const w = roots.map(r => Math.round(Math.sqrt(A) * r)), h = w.map((x, k) => x / (roots[k] * roots[k]));
     const H = Math.max(...h);                      // line stickers up on their bottom edge when in one row
-    cards.style.paddingRight = '';
     items.forEach((a, k) => { a.style.width = w[k] + 'px'; a.style.marginTop = fits ? Math.round(H - h[k]) + 'px' : '0'; });
-    if (phone.matches) {                           // let the last card slide all the way to the left edge too
-      const last = items[items.length - 1];
-      cards.style.paddingRight = Math.max(16, cards.clientWidth - last.offsetWidth - 16) + 'px';
-    }
   };
   imgs.forEach(i => i.complete ? 0 : i.addEventListener('load', run));
   run();

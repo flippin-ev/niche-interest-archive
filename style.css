@@ -74,11 +74,12 @@ dd { margin:0; font-weight:700; }
 
 
 @media (max-width:760px) {
-  .session { display:block; padding:2.5rem 1rem 1rem; }
-  .side { margin-bottom:2rem; }
-  .cards { scroll-snap-type:x mandatory; scroll-padding-left:1rem; gap:1.1rem; padding:24px 1rem 40px; margin:-24px -1rem -40px; }
-  .card { scroll-snap-align:start; }
-  .dots { display:flex; gap:.5rem; margin-top:1.4rem; }
+  .session { grid-template-columns:auto minmax(0,1fr); gap:0 1rem; padding:2.5rem 1rem 1rem; }
+  .side { --num:3.6rem; margin-bottom:0; }
+  .cards { scroll-snap-type:x mandatory; gap:2rem; padding:24px 12px 40px; margin:-24px -12px -40px; overflow-x:auto; scrollbar-width:none; }
+  .cards::-webkit-scrollbar { display:none; }
+  .card { scroll-snap-align:center; scroll-snap-stop:always; }
+  .dots { display:flex; gap:.5rem; margin-top:1.4rem; grid-column:2; }
   .dots i { width:8px; height:8px; background:var(--mute); opacity:.35; }
   .dots i.on { background:var(--ink); opacity:1; }
   .deck { grid-template-columns:1fr; gap:2.5rem; }
