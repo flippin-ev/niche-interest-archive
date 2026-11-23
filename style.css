@@ -73,7 +73,7 @@ dd { margin:0; font-weight:700; }
 .embed iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
 
 
-@media (max-width:760px) {
+@media (max-width:520px) {
   .session { grid-template-columns:auto minmax(0,1fr); gap:0 1rem; padding:2.5rem 1rem 1rem; }
   .side { --num:3.6rem; margin-bottom:0; }
   .cards { scroll-snap-type:x mandatory; gap:2rem; padding:24px 12px 40px; margin:-24px -12px -40px; overflow-x:auto; scrollbar-width:none; }

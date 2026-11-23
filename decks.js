@@ -55,7 +55,7 @@ window.hasDate = function (iso) { return /^\d{4}-\d{2}-\d{2}$/.test(iso || ""); 
 // (same area, different proportions, never cropped). Wraps only on narrow screens.
 window.layoutRow = function (cards) {
   const items = [...cards.children], imgs = items.map(a => a.querySelector('img'));
-  const phone = matchMedia('(max-width:760px)');
+  const phone = matchMedia('(max-width:520px)');
   const AMAX = 250 * 333;                          // biggest a sticker may be; lower = smaller stickers
   const run = () => {
     if (imgs.some(i => !i.naturalWidth)) return;
