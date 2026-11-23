@@ -82,7 +82,7 @@ window.buildViewer = function (d) {
   const mk = (tag, cls, txt) => Object.assign(document.createElement(tag), { className: cls || '', textContent: txt || '' });
   const wrap = mk('div', 'viewer'), stage = mk('div', 'stage'), img = mk('img');
   img.alt = 'Slide from ' + d.title;
-  const prev = mk('button', 'nav prev', '\u2039'), next = mk('button', 'nav next', '\u203A');
+  const prev = mk('button', 'nav prev', '\u00AB'), next = mk('button', 'nav next', '\u00BB');
   prev.setAttribute('aria-label', 'Previous slide'); next.setAttribute('aria-label', 'Next slide');
   stage.append(img, prev, next);
   const notes = mk('div', 'notes');
