@@ -55,6 +55,7 @@ window.hasDate = function (iso) { return /^\d{4}-\d{2}-\d{2}$/.test(iso || ""); 
 // (same area, different proportions, never cropped). Wraps only on narrow screens.
 window.layoutRow = function (cards) {
   const items = [...cards.children], imgs = items.map(a => a.querySelector('img'));
+  const phone = matchMedia('(max-width:760px)');
   const AMAX = 250 * 333;                          // biggest a sticker may be; lower = smaller stickers
   const run = () => {
     if (imgs.some(i => !i.naturalWidth)) return;
@@ -62,7 +63,11 @@ window.layoutRow = function (cards) {
     const roots = imgs.map(i => Math.sqrt(i.naturalWidth / i.naturalHeight));
     const fitA = Math.pow((cards.clientWidth - gap * (items.length - 1)) / roots.reduce((a, b) => a + b, 0), 2);
     const fits = true;   // same-session stickers always stay on one row, shrinking as the screen narrows
-    const A = Math.max(Math.min(fitA, AMAX), AMAX * 0.8);   // never smaller than this: on tiny screens the row scrolls sideways instead
+    let A = Math.max(Math.min(fitA, AMAX), AMAX * 0.8);   // never smaller than this: on tiny screens the row scrolls sideways instead
+    if (phone.matches) {                           // phones: a swipe carousel, one big sticker at a time (next one peeks in)
+      const wide = Math.max(...roots), tall = Math.min(...roots);
+      A = Math.pow(Math.min(0.74 * cards.clientWidth / wide, 0.5 * innerHeight * tall), 2);
+    }
     cards.style.flexWrap = fits ? 'nowrap' : 'wrap';
     const w = roots.map(r => Math.round(Math.sqrt(A) * r)), h = w.map((x, k) => x / (roots[k] * roots[k]));
     const H = Math.max(...h);                      // line stickers up on their bottom edge when in one row
@@ -71,6 +76,18 @@ window.layoutRow = function (cards) {
   imgs.forEach(i => i.complete ? 0 : i.addEventListener('load', run));
   run();
   addEventListener('resize', run);
+  // little square page dots under the row (only shown on phones)
+  const dots = document.createElement('div'); dots.className = 'dots'; dots.setAttribute('aria-hidden', 'true');
+  items.forEach(() => dots.append(document.createElement('i')));
+  cards.after(dots);
+  const mark = () => {
+    const x = cards.scrollLeft + cards.clientWidth / 2;
+    let best = 0, bd = 1e9;
+    items.forEach((a, k) => { const d = Math.abs(a.offsetLeft + a.offsetWidth / 2 - cards.offsetLeft - x); if (d < bd) { bd = d; best = k; } });
+    [...dots.children].forEach((d, k) => d.classList.toggle('on', k === best));
+  };
+  cards.addEventListener('scroll', mark, { passive: true });
+  mark();
 };
 
 // Slide viewer for a deck whose slides are saved as images (assets/slides/<id>/01.jpg ...)
