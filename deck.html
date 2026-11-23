@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="bone">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Niche Interest Night — Archive</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="back" href="./">&larr; archive</a>
+<main id="root"></main>
+<script src="decks.js"></script>
+<script>
+const root = document.getElementById('root');
+const id = new URLSearchParams(location.search).get('id');
+const d = window.DECKS.find(x => x.id === id);
+
+function el(tag, props = {}, ...kids) {
+  const e = Object.assign(document.createElement(tag), props);
+  kids.forEach(k => e.append(k));
+  return e;
+}
+
+if (!d) {
+  root.append(el('p', { style: 'padding:2rem', textContent: 'Not found.' }));
+} else {
+  document.title = d.title + ' — Niche Interest Night';
+  const slidesUrl = 'https://docs.google.com/presentation/d/' + d.slidesId + '/edit';
+  const embedUrl = 'https://docs.google.com/presentation/d/' + d.slidesId + '/embed?start=false&loop=false';
+
+  const dl = el('dl', {},
+    el('dt', { textContent: 'Session' }), el('dd', { textContent: String(d.session) }),
+    el('dt', { textContent: 'Date' }), el('dd', { textContent: fmtDate(d.date) })
+  );
+  if (d.speaker) dl.append(el('dt', { textContent: 'Speaker' }), el('dd', { textContent: d.speaker }));
+  const links = el('div', { className: 'links' });
+  if (d.slidesId) links.append(el('a', { href: slidesUrl, target: '_blank', rel: 'noopener', textContent: 'open in google slides' }));
+  if (d.pptx) links.append(el('a', { href: d.pptx, download: '', textContent: 'download pptx' }));
+
+  let embed = '';
+  if (d.slides) embed = buildViewer(d);
+  else if (d.slidesId) embed = el('div', { className: 'embed' }, el('iframe', { src: embedUrl, allowFullscreen: true, title: 'Slides: ' + d.title }));
+  else embed = el('p', { className: 'none', textContent: 'Slides not available. had to be there !!' });
+
+  root.append(el('div', { className: 'deck' },
+    el('div', { className: 'sticker-wrap' },
+      el('img', { className: 'sticker', src: d.sticker, alt: 'Sticker for ' + d.title }),
+      el('div', { className: 'stamp', textContent: 'Session ' + d.session + ' / ' + fmtDate(d.date) })
+    ),
+    el('div', {},
+      el('div', { className: 'no', textContent: d.no }),
+      el('h1', { textContent: d.title }),
+      el('p', { className: 'sub', textContent: d.subtitle || '' }),
+      dl, links
+    )
+  ), el('div', { className: 'under' }, embed));
+}
+</script>
+</body>
+</html>

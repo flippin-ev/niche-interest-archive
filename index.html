@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="bone">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Niche Interest Night — Archive</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site">
+  <div class="bar"><div class="clip"><h1 class="big"><span>Niche</span> <span>Interest</span> <span>Night</span> <span>Archive</span></h1><div class="small" aria-hidden="true">Niche Interest Night Archive</div></div></div>
+</header>
+<main class="grid" id="grid"></main>
+
+<script src="decks.js"></script>
+<script>
+const grid = document.getElementById('grid');
+const bySession = {};
+window.DECKS.forEach(d => (bySession[d.session] = bySession[d.session] || []).push(d));
+Object.keys(bySession).map(Number).sort((a, b) => b - a).forEach(n => {
+  const decks = bySession[n];
+  const when = (decks.find(d => hasDate(d.date)) || decks[0]).date;
+  const sec = document.createElement('section');
+  sec.className = 'session';
+  sec.innerHTML = '<div class="side"><div class="top"><div class="vert">Session</div><div class="num"></div></div><div class="when"></div></div><div class="cards"></div>';
+  sec.querySelector('.num').textContent = String(n).padStart(2, '0');
+  sec.querySelector('.when').textContent = fmtDate(when);
+  const cards = sec.querySelector('.cards');
+  decks.forEach(d => {
+    const a = document.createElement('a');
+    a.className = 'card';
+    a.href = 'deck.html?id=' + encodeURIComponent(d.id);
+    a.innerHTML = '<img class="sticker" alt=""><div class="meta"><div class="row"><span class="no"></span></div><div class="t"></div><div class="by"></div></div>';
+    a.querySelector('.sticker').src = d.sticker;
+    a.querySelector('.sticker').alt = 'Sticker for ' + d.title;
+    a.querySelector('.no').textContent = 'No. ' + d.no;
+    a.querySelector('.t').textContent = d.title;
+    if (d.speaker) a.querySelector('.by').textContent = 'by ' + d.speaker; else a.querySelector('.by').remove();
+    cards.append(a);
+  });
+  grid.append(sec);
+  layoutRow(cards);
+});
+
+
+function fitSides() {   // SESSION spans the height of the digits; the date spans the width of the block
+  document.querySelectorAll('.side').forEach(side => {
+    const num = side.querySelector('.num'), vert = side.querySelector('.vert'), when = side.querySelector('.when'), top = side.querySelector('.top');
+    const glyphH = parseFloat(getComputedStyle(num).fontSize) * 0.708;
+    vert.style.fontSize = '100px';
+    vert.style.fontSize = (0.85 * 100 * glyphH / vert.getBoundingClientRect().height) + 'px';
+    when.style.fontSize = '100px';
+    when.style.fontSize = (0.88 * 100 * top.getBoundingClientRect().width / when.getBoundingClientRect().width) + 'px';
+  });
+}
+document.fonts.ready.then(fitSides);
+addEventListener('resize', fitSides);
+
+const bar = document.querySelector('.bar'), big = bar.querySelector('.big'), head = document.querySelector('header.site');
+let T = 96, HFULL = 560;
+let S = 500;                              // scroll distance (px) over which the title shrinks (shortened automatically on short pages)
+const lerp = (a, b, t) => a + (b - a) * t, clamp = x => Math.min(1, Math.max(0, x)), sm = x => x * x * (3 - 2 * x);
+function measure() {
+  big.style.fontSize = 'var(--t)'; T = parseFloat(getComputedStyle(big).fontSize); big.style.fontSize = '';
+  HFULL = head.offsetHeight;
+}
+function fitBottom() {                   // page ends while the tallest sticker still sits a bit below the header bar
+  const grid = document.getElementById('grid'), ss = document.querySelectorAll('.session');
+  if (!grid || !ss.length || !grid.getClientRects().length) return;
+  grid.style.paddingBottom = '0px';
+  const h0 = grid.getBoundingClientRect().bottom + scrollY, GAP = 52 + 44;
+  const tallTop = Math.min(...[...ss[ss.length - 1].querySelectorAll('.card .sticker')].map(i => i.getBoundingClientRect().top + scrollY));
+  if (!isFinite(tallTop)) return;
+  grid.style.paddingBottom = Math.max(32, tallTop + innerHeight - GAP - h0) + 'px';
+  S = Math.max(120, Math.min(500, tallTop - GAP));
+}
+function update() {                       // title shrinks into the bar, in step with scroll
+  const p = clamp(window.scrollY / S), set = (k, v) => bar.style.setProperty(k, v);
+  const e = sm(clamp(p / 0.8));           // stacked title keeps shrinking (never disappears while the bar is tall)
+  const fs = lerp(T, 24, e), top = lerp(40, 15, e);
+  const stack = top + fs * 0.88 * 4 + 12;
+  const bo = 1 - clamp((p - 0.3) / 0.7), so = clamp((p - 0.45) / 0.55);   // stacked title fades out evenly across most of the scroll, gone exactly at the final size
+  const bh = lerp(stack, 52, sm(clamp((p - 0.75) / 0.25)));
+  set('--bf', fs + 'px'); set('--bt', top + 'px'); set('--bo', bo); set('--so', so);
+  set('--bgo', clamp(p * 3)); set('--bh', bh + 'px');
+  }
+let ticking = false;
+addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { update(); ticking = false; }); } }, { passive: true });
+addEventListener('resize', () => { measure(); fitBottom(); update(); });
+measure(); fitBottom(); update();
+addEventListener('load', () => { fitBottom(); update(); });
+document.fonts.ready.then(() => { fitBottom(); update(); });
+</script>
+</body>
+</html>
