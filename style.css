@@ -110,6 +110,6 @@ dd { margin:0; font-weight:700; }
 .viewer .notes p { margin:0 0 .7rem; line-height:1.45; }
 
 .grid { position:relative; }
-.credit { position:absolute; right:2rem; bottom:1rem; font-size:11px; letter-spacing:.04em; text-transform:none; color:var(--mute); opacity:.5; cursor:default; }
+.credit { position:absolute; right:2rem; bottom:1rem; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--mute); opacity:.45; cursor:default; }
 .credit.foot { position:static; text-align:right; padding:3rem 2rem 1.5rem; }
 @media (max-width:520px) { .credit { right:1rem; } .credit.foot { padding:2rem 1rem 1.25rem; } }
