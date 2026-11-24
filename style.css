@@ -108,3 +108,8 @@ dd { margin:0; font-weight:700; }
 .viewer .notes[hidden] { display:none; }
 .viewer .notes .lbl { font-family:var(--mono); font-size:12px; text-transform:uppercase; color:var(--mute); margin-bottom:.7rem; }
 .viewer .notes p { margin:0 0 .7rem; line-height:1.45; }
+
+.grid { position:relative; }
+.credit { position:absolute; left:2rem; bottom:1rem; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--mute); opacity:.6; }
+.credit.foot { position:static; padding:3rem 2rem 2rem; }
+@media (max-width:520px) { .credit { left:1rem; } .credit.foot { padding:2rem 1rem 1.5rem; } }
